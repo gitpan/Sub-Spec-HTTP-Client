@@ -1,0 +1,111 @@
+NAME
+    Sub::Spec::HTTP::Client - Call remote functions via HTTP
+
+VERSION
+    version 0.01
+
+SYNOPSIS
+     use Sub::Spec::HTTP::Client qw(call_sub_http);
+     my $res = call_sub_http(
+         url    => 'https://localhost:1234/',
+         module => 'Foo::Bar',
+         sub    => 'my_sub',
+         args   => {arg1=>1, arg2=>2},
+     );
+
+DESCRIPTION
+    This module provides one function, call_sub_http.
+
+    This module uses Log::Any.
+
+    This module's functions has Sub::Spec specs.
+
+FUNCTIONS
+    None are exported, but they can be.
+
+  call_sub_http(%args) -> [STATUS_CODE, ERR_MSG, RESULT]
+    Call remote functions via HTTP.
+
+    The Sub::Spec::HTTP::Server module can serve function call requests over
+    HTTP. This function does the requests. Basically what this function does
+    is just construct HTTP request, encode arguments in JSON format into the
+    request body, send the request, and read the HTTP response.
+
+    The HTTP response can contain log messages in HTTP response chunks,
+    which will be "rethrown" by this function into Log::Any log calls (or
+    fed into callback subroutine instead, if a callback is provided).
+
+    The remote function's response is encoded in JSON format by the server;
+    this function will decode and return it.
+
+    Returns a 3-element arrayref. STATUS_CODE is 200 on success, or an error
+    code between 3xx-5xx (just like in HTTP). ERR_MSG is a string containing
+    error message, RESULT is the actual result.
+
+    Arguments ("*" denotes required arguments):
+
+    *   url* => *str*
+
+        URL of server.
+
+    *   module* => *str*
+
+        Name of module to call.
+
+    *   sub* => *str*
+
+        Name of function to call.
+
+    *   args => *hash*
+
+        Function arguments.
+
+    *   implementor => *str*
+
+        If specified, use this class for http LWP::Protocol::implementor.
+
+        To access Unix socket server instead of a normal TCP one, set this
+        to 'LWP::Protocol::http::SocketUnix'.
+
+    *   log_callback => *code*
+
+        Value must be one of:
+
+         ["fatal", "error", "warn", "info", "debug", "trace"]
+
+        Pass log messages to callback subroutine.
+
+        If log_callback is not provided, log messages will be "rethrown"
+        into Log::Any logging methods (e.g. $log->warn(), $log->debug(),
+        etc).
+
+    *   log_level => *str*
+
+        Value must be one of:
+
+         ["fatal", "error", "warn", "info", "debug", "trace"]
+
+        Request logging output from server.
+
+BUGS/LIMITATIONS/TODOS
+    If you use the LWP::Protocol::http::SocketUnix implementor, you will get
+    a network failure error: "500 - No Host option provided". This is a
+    reported bug in LWP::Protocol::http::SocketUnix. For detailed
+    description and remedy, see:
+
+     https://rt.cpan.org/Public/Bug/Display.html?id=65670
+
+SEE ALSO
+    Sub::Spec
+
+    Sub::Spec::HTTP::Server
+
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2011 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
