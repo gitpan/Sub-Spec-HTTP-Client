@@ -1,5 +1,14 @@
 Revision history for Sub::Spec::HTTP::Client
 
+0.03     2011-05-13
+
+         [BUG FIXES]
+
+         - LWP::UserAgent can split a single HTTP response chunk from server
+           into several chunks fed into response_data handler. We need to
+           concatenate these chunks into one.
+
+
 0.02     2011-05-13
 
          No functional changes.

@@ -1,6 +1,6 @@
 package Sub::Spec::HTTP::Client;
 BEGIN {
-  $Sub::Spec::HTTP::Client::VERSION = '0.02';
+  $Sub::Spec::HTTP::Client::VERSION = '0.03';
 }
 # ABSTRACT: Call remote functions via HTTP
 
@@ -129,7 +129,9 @@ sub call_sub_http {
         or return [400, "Invalid log_callback: must be a coderef"];
 
     state $ua;
+    state @body;
     state $http_res;
+    state $in_body;
     if (!$ua) {
         $ua = LWP::UserAgent->new;
         $ua->env_proxy;
@@ -137,6 +139,13 @@ sub call_sub_http {
             "response_data",
             sub {
                 my ($resp, $ua, $h, $data) = @_;
+                # LWP::UserAgent can chop a single chunk from server into
+                # several chunks
+                if ($in_body) {
+                    push @body, $data;
+                    return 1;
+                }
+
                 $data =~ s/(.)//;
                 my $chunk_type = $1;
                 if ($chunk_type eq 'L') {
@@ -150,8 +159,9 @@ sub call_sub_http {
                     }
                     return 1;
                 } elsif ($chunk_type eq 'R') {
-                    $http_res = HTTP::Response->parse($data);
-                    return 0;
+                    $in_body++;
+                    push @body, $data;
+                    return 1;
                 } else {
                     $http_res = [
                         500,
@@ -160,8 +170,18 @@ sub call_sub_http {
                 }
             }
         );
+        $ua->set_my_handler(
+            "response_done",
+            sub {
+                my ($resp, $ua, $h) = @_;
+                $http_res = HTTP::Response->parse(join "", @body);
+            },
+        );
+
     }
     $http_res = undef;
+    @body     = ();
+    $in_body  = 0;
 
     my $req = HTTP::Request->new(POST => $url);
     $req->header('Accept' => 'application/json');
@@ -196,6 +216,7 @@ sub call_sub_http {
 
     my $res;
     eval {
+        #$log->debugf("http_res content: %s", $http_res->content);
         $res = $json->decode($http_res->content);
     };
     $eval_err = $@;
@@ -216,7 +237,7 @@ Sub::Spec::HTTP::Client - Call remote functions via HTTP
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 SYNOPSIS
 
