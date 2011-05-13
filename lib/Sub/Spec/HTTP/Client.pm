@@ -1,6 +1,6 @@
 package Sub::Spec::HTTP::Client;
 BEGIN {
-  $Sub::Spec::HTTP::Client::VERSION = '0.01';
+  $Sub::Spec::HTTP::Client::VERSION = '0.02';
 }
 # ABSTRACT: Call remote functions via HTTP
 
@@ -216,7 +216,7 @@ Sub::Spec::HTTP::Client - Call remote functions via HTTP
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 

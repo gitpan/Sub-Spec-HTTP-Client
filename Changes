@@ -1,5 +1,14 @@
 Revision history for Sub::Spec::HTTP::Client
 
+0.02     2011-05-13
+
+         No functional changes.
+
+         [BUG FIXES]
+
+         - Missing dep: Log::Any
+
+
 0.01     2011-05-12
 
          First release.
