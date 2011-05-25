@@ -23,4 +23,4 @@ requires:
 resources:
   homepage: http://search.cpan.org/dist/Sub-Spec-HTTP-Client/
   repository: http://github.com/sharyanto/perl-Sub-Spec-HTTP-Client
-version: 0.03
+version: 0.04

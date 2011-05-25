@@ -1,6 +1,6 @@
 package Sub::Spec::HTTP::Client;
 BEGIN {
-  $Sub::Spec::HTTP::Client::VERSION = '0.03';
+  $Sub::Spec::HTTP::Client::VERSION = '0.04';
 }
 # ABSTRACT: Call remote functions via HTTP
 
@@ -74,7 +74,6 @@ _
         }],
         args => ['hash' => {
             summary => 'Function arguments',
-            match   => qr/^\w+$/,
             arg_pos => 3,
         }],
         implementor => ['str' => {
@@ -99,7 +98,6 @@ If log_callback is not provided, log messages will be "rethrown" into Log::Any
 logging methods (e.g. $log->warn(), $log->debug(), etc).
 
 _
-            in      => [qw/fatal error warn info debug trace/],
         }],
     },
 };
@@ -213,6 +211,7 @@ sub call_sub_http {
         unless $http0_res->is_success;
     return [500, "Client died: $eval_err"] if $eval_err;
     return [500, "Incomplete chunked response from server"] unless $http_res;
+    return [500, "Empty response from server"] if !length($http_res->content);
 
     my $res;
     eval {
@@ -237,7 +236,7 @@ Sub::Spec::HTTP::Client - Call remote functions via HTTP
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -310,11 +309,6 @@ To access Unix socket server instead of a normal TCP one, set this to
 'LWP::Protocol::http::SocketUnix'.
 
 =item * B<log_callback> => I<code>
-
-Value must be one of:
-
- ["fatal", "error", "warn", "info", "debug", "trace"]
-
 
 Pass log messages to callback subroutine.
 

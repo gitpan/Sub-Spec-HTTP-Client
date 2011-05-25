@@ -2,7 +2,7 @@ NAME
     Sub::Spec::HTTP::Client - Call remote functions via HTTP
 
 VERSION
-    version 0.03
+    version 0.04
 
 SYNOPSIS
      use Sub::Spec::HTTP::Client qw(call_sub_http);
@@ -68,10 +68,6 @@ FUNCTIONS
         to 'LWP::Protocol::http::SocketUnix'.
 
     *   log_callback => *code*
-
-        Value must be one of:
-
-         ["fatal", "error", "warn", "info", "debug", "trace"]
 
         Pass log messages to callback subroutine.
 

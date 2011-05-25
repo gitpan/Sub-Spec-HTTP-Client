@@ -1,5 +1,20 @@
 Revision history for Sub::Spec::HTTP::Client
 
+0.04     2011-05-25
+
+         [BUG FIXES]
+
+         - Add workaround for LWP splitting a single HTTP response chunk from
+           server into multiple ones fed into response_data handler
+
+         - Minor fixes to sub spec
+
+         [ETC]
+
+         - Add a more specific error response when Unix socket daemon refused
+           connection (LWP typically doesn't return 500)
+
+
 0.03     2011-05-13
 
          [BUG FIXES]
